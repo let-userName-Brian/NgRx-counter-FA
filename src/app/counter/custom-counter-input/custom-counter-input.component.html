@@ -1,0 +1,12 @@
+<div>
+  <div class="my-3">
+  {{channelName$ | async}}
+  </div>
+  <input type="number" [(ngModel)]="value" placeholder="Enter Number to add">&nbsp;
+  <button class="btn btn-success" (click)="addCustomInput()">Add Custom</button>
+</div>
+
+<div>
+  <input type="text" [(ngModel)]="changedName" placeholder="Change the name">&nbsp;
+  <button class="btn btn-info" (click)="onChangeChannelName()">Change Name</button>
+</div>
