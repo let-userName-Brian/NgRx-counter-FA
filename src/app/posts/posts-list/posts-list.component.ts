@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { Post } from 'src/app/models/post.model';
 import { AppState } from 'src/app/store/app.state';
 import { getPosts } from '../state/posts.selectors';
+import { deletePost } from '../state/posts.actions';
 
 @Component({
   selector: 'app-posts-list',
@@ -18,4 +19,7 @@ export class PostsListComponent implements OnInit {
     this.posts$ = this.store.select(getPosts);
   }
 
-}
+  deletePost(id: any) {
+    this.store.dispatch(deletePost({ id }))
+  }
+};
