@@ -1,7 +1,9 @@
 import { createFeatureSelector, createSelector } from "@ngrx/store";
 import { PostState } from "./posts.state";
 
-const getPostState = createFeatureSelector<PostState>('posts');
+export const POST_STATE_NAME = 'posts';
+
+const getPostState = createFeatureSelector<PostState>(POST_STATE_NAME);
 
 export const getPosts = createSelector(
   getPostState, (state) => {
