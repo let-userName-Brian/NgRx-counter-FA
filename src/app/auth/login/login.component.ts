@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, Validators, FormControl } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { AppState } from 'src/app/store/app.state';
+import { setShowLoading } from 'src/app/store/shared/shared.actions';
 import { loginStart } from '../state/auth.actions';
 
 @Component({
@@ -25,7 +26,8 @@ export class LoginComponent implements OnInit {
     if (this.loginForm.valid) {
       const email = this.loginForm.value.email;
       const password = this.loginForm.value.password;
-      this.store.dispatch(loginStart({ email, password }));
+      this.store.dispatch(setShowLoading({ status: true }));
+      this.store.dispatch(loginStart({ email, password }))
     }
   }
 }
