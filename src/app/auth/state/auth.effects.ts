@@ -1,16 +1,17 @@
 import { Injectable } from "@angular/core";
-import { Actions, createEffect, ofType } from "@ngrx/effects";
+import { Router } from "@angular/router";
+import { Actions, createEffect, Effect, ofType } from "@ngrx/effects";
 import { Store } from "@ngrx/store";
-import { catchError, exhaustMap, map, of } from "rxjs";
+import { catchError, exhaustMap, map, of, tap } from "rxjs";
 import { AuthResponseData } from "src/app/models/authModelResponseData.model";
 import { AuthService } from "src/app/Services/auth.service";
 import { AppState } from "src/app/store/app.state";
 import { setErrorMessage, setShowLoading } from "src/app/store/shared/shared.actions";
-import { loginStart, loginSuccess } from "./auth.actions";
+import { loginStart, loginSuccess, signupStart } from "./auth.actions";
 
 @Injectable()
 export class AuthEffects {
-  constructor(private actions$: Actions, private authService: AuthService, private store: Store<AppState>) { }
+  constructor(private actions$: Actions, private authService: AuthService, private store: Store<AppState>, private router: Router) { }
 
   login$ = createEffect((): any => {
     return this.actions$.pipe( // this.actions$ is the source of the observable
@@ -31,5 +32,36 @@ export class AuthEffects {
         );
       })
     )
-  })
+  });
+
+  signup$ = createEffect((): any => {
+    return this.actions$.pipe(
+      ofType(signupStart),
+      exhaustMap((action) => {
+        return this.authService.signup(action.email, action.password).pipe(
+          map((data: AuthResponseData) => {
+            this.store.dispatch(setShowLoading({ status: false }));
+            this.store.dispatch(setErrorMessage({ message: '' }));
+            const user = this.authService.formatUser(data);
+            return loginSuccess({ user });
+          }),
+          catchError((errorResp): any => {
+            const errorMessage = this.authService.getErrorMessage(errorResp.error.error.message);
+            this.store.dispatch(setShowLoading({ status: false }));
+            return of(setErrorMessage({ message: errorMessage }));
+          })
+        );
+      })
+    )
+  });
+
+  loginRedirect$ = createEffect((): any => {
+    return this.actions$.pipe(
+      ofType(loginSuccess),
+      tap(() => {
+        this.router.navigate(['/']);
+      })
+    )
+  }, { dispatch: false });
+
 }

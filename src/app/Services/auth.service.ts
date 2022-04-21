@@ -25,6 +25,11 @@ export class AuthService {
     return user;
   }
 
+  signup(email: string, password: string): Observable<AuthResponseData> {
+    return this.http.post<AuthResponseData>(`https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${environment.FIREBASE_API_KEY}`,
+      { email, password, returnSecureToken: true })
+  }
+
   getErrorMessage(message: string) {
     switch (message) {
       case 'EMAIL_NOT_FOUND':
@@ -36,5 +41,5 @@ export class AuthService {
       default:
         return 'An unknown error occurred';
     }
-  }
+  };
 }

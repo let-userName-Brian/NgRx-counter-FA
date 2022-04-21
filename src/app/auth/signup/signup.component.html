@@ -1,1 +1,29 @@
-<p>signup works!</p>
+<div class="row">
+  <div class="col-md-6 offset-md-3">
+    <h3>Signup</h3>
+    <hr>
+    <form [formGroup]="signupForm" (ngSubmit)="onSignup()">
+      <div class="mb-3">
+        <label>Email</label>
+        <input type="email" class="form-control" placeholder="Enter Email" required formControlName="email" />
+      </div>
+      <div *ngIf="signupForm.get('email')?.touched && !signupForm.get('email')?.valid">
+        <div class="alert alert-danger" role="alert">
+          Email is required
+        </div>
+      </div>
+      <div class="mb-3">
+        <label>Password</label>
+        <input type="password" class="form-control" placeholder="Enter Password" required formControlName="password" />
+      </div>
+      <div *ngIf="signupForm.get('password')?.touched && !signupForm.get('password')?.valid">
+        <div class="alert alert-danger" role="alert">
+          Password is required
+        </div>
+      </div>
+      <div class="mb-3">
+        <button class="btn btn-primary" type="submit" [disabled]="!signupForm.valid">Login</button>
+      </div>
+    </form>
+  </div>
+</div>
