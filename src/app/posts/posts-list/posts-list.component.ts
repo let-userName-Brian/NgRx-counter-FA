@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { Post } from 'src/app/models/post.model';
 import { AppState } from 'src/app/store/app.state';
 import { getPosts } from '../state/posts.selectors';
-import { deletePost } from '../state/posts.actions';
+import { deletePost, loadPosts } from '../state/posts.actions';
 
 @Component({
   selector: 'app-posts-list',
@@ -17,6 +17,7 @@ export class PostsListComponent implements OnInit {
 
   ngOnInit(): void {
     this.posts$ = this.store.select(getPosts);
+    this.store.dispatch(loadPosts())
   }
 
   deletePost(id: any) {

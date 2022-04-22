@@ -6,5 +6,8 @@ export class User {
     private expirationDate: Date
   ) { }
 
+  getExpirationDate() {
+    return this.expirationDate;
+  }
 
 }

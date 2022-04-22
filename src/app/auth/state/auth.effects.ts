@@ -7,7 +7,7 @@ import { AuthResponseData } from "src/app/models/authModelResponseData.model";
 import { AuthService } from "src/app/Services/auth.service";
 import { AppState } from "src/app/store/app.state";
 import { setErrorMessage, setShowLoading } from "src/app/store/shared/shared.actions";
-import { loginStart, loginSuccess, signupStart } from "./auth.actions";
+import { autoLoginAction, AUTO_LOGIN_ACTION, loginStart, loginSuccess, signupStart, signupSuccess } from "./auth.actions";
 
 @Injectable()
 export class AuthEffects {
@@ -22,6 +22,7 @@ export class AuthEffects {
             this.store.dispatch(setShowLoading({ status: false })); //dispatch the loading to false
             this.store.dispatch(setErrorMessage({ message: '' })); //dispatch the error to null
             const user = this.authService.formatUser(data); // format the response
+            this.authService.setUserInLocalStorage(user)
             return loginSuccess({ user }); // dispatch the action
           }),
           catchError((errorResp): any => { // catch the error
@@ -43,6 +44,7 @@ export class AuthEffects {
             this.store.dispatch(setShowLoading({ status: false }));
             this.store.dispatch(setErrorMessage({ message: '' }));
             const user = this.authService.formatUser(data);
+            this.authService.setUserInLocalStorage(user)
             return loginSuccess({ user });
           }),
           catchError((errorResp): any => {
@@ -64,4 +66,17 @@ export class AuthEffects {
     )
   }, { dispatch: false });
 
-}
+  autoLogin$ = createEffect((): any => {
+    return this.actions$.pipe(
+      ofType(autoLoginAction),
+      map(() => {
+        const user = this.authService.getUserFromLocalStorage();
+        if (!user) {
+          return setErrorMessage({ message: 'No user found' });
+        }
+        return loginSuccess({ user });
+      })
+    )
+  }, { dispatch: false });
+
+  }

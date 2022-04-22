@@ -7,6 +7,7 @@ import { User } from "../models/user.model";
 
 @Injectable({ providedIn: "root" })
 export class AuthService {
+  timeoutInterval: any;
   constructor(private http: HttpClient) { }
 
   login(email: string, password: string): Observable<AuthResponseData> {
@@ -42,4 +43,33 @@ export class AuthService {
         return 'An unknown error occurred';
     }
   };
+
+  setUserInLocalStorage(user: User) {
+    localStorage.setItem('user', JSON.stringify(user));
+
+    const todaysDate = new Date().getTime();
+    const expirationDate = user.getExpirationDate().getTime();
+    const timeInterval = expirationDate - todaysDate;
+
+    this.timeoutInterval = setTimeout(() => {
+      localStorage.removeItem('user');
+    }, timeInterval);
+  }
+
+  getUserFromLocalStorage() {
+    const userDataString = localStorage.getItem('user');
+    if (userDataString) {
+      const userData = JSON.parse(userDataString);
+      const expirationDate = new Date(userData.expirationDate);
+      const user = new User(
+        userData.email,
+        userData.token,
+        userData.localId,
+        expirationDate
+      )
+      
+      return user;
+    }
+    return null;
+  }
 }
